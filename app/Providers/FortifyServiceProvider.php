@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+use App\Models\User;
+use Hash;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -48,7 +50,23 @@ class FortifyServiceProvider extends ServiceProvider
                 return $user;
             }
         });
-        
+
+        Fortify::requestPasswordResetLinkView(function () {
+            return view('auth.forgot-password');
+        });
+
+        Fortify::resetPasswordView(function (Request $request) {
+            return view('auth.reset-password', ['request' => $request]);
+        });
+
+        Fortify::confirmPasswordView(function () {
+            return view('auth.confirm-password');
+        });
+
+        Fortify::twoFactorChallengeView(function () {
+            return view('auth.two-factor-challenge');
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;
 
